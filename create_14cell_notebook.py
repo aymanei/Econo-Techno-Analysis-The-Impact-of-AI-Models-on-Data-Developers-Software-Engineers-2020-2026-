@@ -49,11 +49,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
 from plotly.subplots import make_subplots
 from IPython.display import display, HTML
 import warnings
 
 warnings.filterwarnings('ignore')
+
+# Configure Plotly renderer for Jupyter/VS Code compatibility
+pio.renderers.default = "notebook_connected"
 
 # Set visual styling defaults for charts
 sns.set_theme(style="whitegrid", palette="deep")
@@ -106,7 +110,7 @@ cell5 = nbf.v4.new_markdown_cell("""## 2. Canada: Statistics Canada TechStat & E
 Examining enterprise AI adoption rates across sectors and the shift in hiring demand between junior and senior developers.
 """)
 
-# Cell 6: Code - Canada Analysis & Plotly Dual Subplots (FIXED ENCODING & ADDED SECTOR ADOPTION CHART)
+# Cell 6: Code - Canada Analysis & Plotly Dual Subplots (ROBUST SHOW RENDERER FIX FOR LINE 64)
 cell6 = nbf.v4.new_code_cell("""# Cell 6: Canada StatCan TechStat Initiative & Job Demand Dynamics
 from IPython.display import display
 import pandas as pd
@@ -170,7 +174,10 @@ fig_can.update_layout(
     showlegend=True
 )
 
-fig_can.show()
+try:
+    fig_can.show()
+except Exception:
+    display(fig_can)
 """)
 
 # Cell 7: Markdown - EU Section Intro
@@ -314,7 +321,10 @@ fig_summary.update_layout(
     xaxis=dict(range=[0, 100])
 )
 
-fig_summary.show()
+try:
+    fig_summary.show()
+except Exception:
+    display(fig_summary)
 """)
 
 # Cell 13: Code - Interactive KPI Executive Dashboard & Work Breakdown Donut Chart
@@ -368,7 +378,10 @@ fig_donut.update_layout(
     height=380
 )
 
-fig_donut.show()
+try:
+    fig_donut.show()
+except Exception:
+    display(fig_donut)
 """)
 
 # Cell 14: Code - Dataset Export & Final Analysis Confirmation
