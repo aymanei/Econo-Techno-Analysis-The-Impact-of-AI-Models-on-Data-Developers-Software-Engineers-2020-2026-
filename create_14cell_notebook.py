@@ -106,8 +106,15 @@ cell5 = nbf.v4.new_markdown_cell("""## 2. Canada: Statistics Canada TechStat & E
 Examining enterprise AI adoption rates across sectors and the shift in hiring demand between junior and senior developers.
 """)
 
-# Cell 6: Code - Canada Analysis & Plotly Chart
+# Cell 6: Code - Canada Analysis & Plotly Dual Subplots (FIXED ENCODING & ADDED SECTOR ADOPTION CHART)
 cell6 = nbf.v4.new_code_cell("""# Cell 6: Canada StatCan TechStat Initiative & Job Demand Dynamics
+from IPython.display import display
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+# 1. Datasets
 statcan_adoption_data = {
     'Industry_Sector': ['Tech & Digital Services', 'Finance & Insurance', 'Information & Media', 'Professional Services', 'Manufacturing', 'Retail & Commerce'],
     'Enterprise_AI_Adoption_Pct_2026': [65.6, 58.2, 52.4, 48.9, 32.1, 28.5],
@@ -124,22 +131,45 @@ statcan_experience_demand = {
 
 df_statcan_demand = pd.DataFrame(statcan_experience_demand)
 
-# Interactive Plotly Chart: Junior vs Senior Developer Hiring Demand Index
-fig_can = go.Figure()
-fig_can.add_trace(go.Scatter(x=df_statcan_demand['Year'], y=df_statcan_demand['Junior_Entry_Dev_Demand_Index'],
-                             mode='lines+markers', name='Junior/Entry Developers (Index)',
-                             line=dict(color='#e74c3c', width=3)))
-fig_can.add_trace(go.Scatter(x=df_statcan_demand['Year'], y=df_statcan_demand['Senior_Lead_Dev_Demand_Index'],
-                             mode='lines+markers', name='Senior/Lead Developers (Index)',
-                             line=dict(color='#2ecc71', width=3)))
+display(df_statcan_adoption)
+display(df_statcan_demand)
+
+# 2. Interactive Plotly Dual Subplots: Sector AI Adoption & Experience Level Demand Index
+fig_can = make_subplots(rows=1, cols=2, subplot_titles=('Canada Enterprise AI Adoption by Sector (%)', 'Junior vs. Senior Developer Demand Index (2020-2026)'))
+
+# Subplot 1: Sector Bar Chart
+fig_can.add_trace(go.Bar(
+    x=df_statcan_adoption['Enterprise_AI_Adoption_Pct_2026'],
+    y=df_statcan_adoption['Industry_Sector'],
+    orientation='h',
+    name='AI Adoption %',
+    marker=dict(color='#3498db')
+), row=1, col=1)
+
+# Subplot 2: Junior vs Senior Demand Line Chart
+fig_can.add_trace(go.Scatter(
+    x=df_statcan_demand['Year'],
+    y=df_statcan_demand['Junior_Entry_Dev_Demand_Index'],
+    mode='lines+markers',
+    name='Junior/Entry Developers',
+    line=dict(color='#e74c3c', width=3)
+), row=1, col=2)
+
+fig_can.add_trace(go.Scatter(
+    x=df_statcan_demand['Year'],
+    y=df_statcan_demand['Senior_Lead_Dev_Demand_Index'],
+    mode='lines+markers',
+    name='Senior/Lead Developers',
+    line=dict(color='#2ecc71', width=3)
+), row=1, col=2)
 
 fig_can.update_layout(
-    title='<b>Canada Tech Market: Junior vs. Senior Developer Demand Index (2020–2026)</b><br><sup>Source: Statistics Canada TechStat & Labour Force Survey</sup>',
-    xaxis_title='Year',
-    yaxis_title='Job Postings Index (2020 = 100)',
+    title='<b>Statistics Canada TechStat: Enterprise AI Adoption & Demand Shift Analysis (2020-2026)</b>',
     template='plotly_white',
-    height=450
+    height=450,
+    showlegend=True
 )
+
 fig_can.show()
 """)
 
